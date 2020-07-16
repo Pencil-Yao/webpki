@@ -217,6 +217,13 @@ pub static ECDSA_P384_SHA384: SignatureAlgorithm = SignatureAlgorithm {
     verification_alg: &signature::ECDSA_P384_SHA384_ASN1,
 };
 
+/// ECDSA signatures using the SM2-P-256 curve and SM3. todo sm2 and sm3 asn1 id
+pub static ECDSA_SM2P256_SM3: SignatureAlgorithm = SignatureAlgorithm {
+    public_key_alg_id: ECDSA_SM2P256,
+    signature_alg_id: ECDSA_SM3,
+    verification_alg: &signature::ECDSA_SM2P256_SM3_ASN1,
+};
+
 /// RSA PKCS#1 1.5 signatures using SHA-256 for keys of 2048-8192 bits.
 pub static RSA_PKCS1_2048_8192_SHA256: SignatureAlgorithm = SignatureAlgorithm {
     public_key_alg_id: RSA_ENCRYPTION,
@@ -296,12 +303,20 @@ const ECDSA_P384: AlgorithmIdentifier = AlgorithmIdentifier {
     asn1_id_value: untrusted::Input::from(include_bytes!("data/alg-ecdsa-p384.der")),
 };
 
+const ECDSA_SM2P256: AlgorithmIdentifier = AlgorithmIdentifier {
+    asn1_id_value: untrusted::Input::from(include_bytes!("data/alg-ecdsa-sm2p256.der")),
+};
+
 const ECDSA_SHA256: AlgorithmIdentifier = AlgorithmIdentifier {
     asn1_id_value: untrusted::Input::from(include_bytes!("data/alg-ecdsa-sha256.der")),
 };
 
 const ECDSA_SHA384: AlgorithmIdentifier = AlgorithmIdentifier {
     asn1_id_value: untrusted::Input::from(include_bytes!("data/alg-ecdsa-sha384.der")),
+};
+
+const ECDSA_SM3: AlgorithmIdentifier = AlgorithmIdentifier {
+    asn1_id_value: untrusted::Input::from(include_bytes!("data/alg-ecdsa-sm3.der")),
 };
 
 const RSA_ENCRYPTION: AlgorithmIdentifier = AlgorithmIdentifier {
@@ -342,6 +357,7 @@ mod tests {
     use base64;
 
     use std::{self, io::BufRead, string::String, vec::Vec};
+    use crate::signed_data::{ECDSA_P256, ECDSA_SM3, ECDSA_SM2P256, ECDSA_SHA256};
 
     // TODO: The expected results need to be modified for SHA-1 deprecation.
 
@@ -711,4 +727,12 @@ mod tests {
         &signed_data::ECDSA_P256_SHA384, // Truncates digest.
         &signed_data::ECDSA_P384_SHA256, // Digest is unnecessarily short.
     ];
+
+    #[test]
+    fn print_asn1() {
+        println!("{:?}", ECDSA_P256.asn1_id_value.as_slice_less_safe());
+        println!("{:?}", ECDSA_SHA256.asn1_id_value.as_slice_less_safe());
+        println!("{:?}", ECDSA_SM3.asn1_id_value.as_slice_less_safe());
+        println!("{:?}", ECDSA_SM2P256.asn1_id_value.as_slice_less_safe());
+    }
 }
