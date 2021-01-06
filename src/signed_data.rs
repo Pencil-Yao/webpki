@@ -167,6 +167,10 @@ struct SubjectPublicKeyInfo<'a> {
     key_value: untrusted::Input<'a>,
 }
 
+pub(crate) fn output_pubkey(input: untrusted::Input) -> Result<&[u8], Error> {
+    Ok(parse_spki_value(input)?.key_value.as_slice_less_safe())
+}
+
 // Parse the public key into an algorithm OID, an optional curve OID, and the
 // key value. The caller needs to check whether these match the
 // `PublicKeyAlgorithm` for the `SignatureAlgorithm` that is matched when

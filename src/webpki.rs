@@ -74,6 +74,7 @@ pub use signed_data::{
 };
 
 pub use time::Time;
+use crate::signed_data::output_pubkey;
 
 /// An end-entity certificate.
 ///
@@ -241,6 +242,11 @@ impl<'a> EndEntityCert<'a> {
             untrusted::Input::from(msg),
             untrusted::Input::from(signature),
         )
+    }
+
+    /// get public key
+    pub fn get_public_key(&self) -> Result<&[u8], Error> {
+        output_pubkey(self.inner.spki.value())
     }
 }
 
